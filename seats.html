@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="seatmap.css" />
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </head>
+    <body>
+        <!-- Na sua página -->
+        <div id="seatmap-container"></div>
+
+        <script type="module">
+            import { SeatMap } from "./seatmap-plugin.js"; // Caminho correto para o arquivo
+            const options = {
+                rows: 25,
+                cols: 25,
+                // exclusiveSection: "MeioID", // Nome da seção exclusiva
+                verticalAisles: [4, 6],
+                horizontalAisles: [4, 8],
+                disabledSeats: [
+                    { row: 1, col: 1 },
+                    { row: 1, col: 2 },
+                    { row: 1, col: 3 },
+                ],
+                excludedSeats: [
+                    { row: 2, col: 1 },
+                    { row: 2, col: 2 },
+                    { row: 2, col: 3 },
+                ],
+                maxSeatsPerSection: {
+                    FrenteID: 2,
+                    // MeioID: 3,
+                    default: 1,
+                },
+                sections: [
+                    {
+                        label: "Frente",
+                        id: "FrenteID",
+                        color: "blue",
+                        rows: [1, 2, 3],
+                        columns: [1, 2, 3],
+                    },
+                    {
+                        label: "Meio",
+                        id: "MeioID",
+                        color: "orange",
+                        rows: [4, 5, 6],
+                        columns: [1, 2, 3],
+                    },
+                ],
+                onSelect: (seatId) => console.log("Selecionado:", seatId),
+                onDeselect: (seatId) => console.log("Deselecionado:", seatId),
+                onMaxSeatsReached: (data) => {
+                    console.log("Limite atingido na seção", data.section);
+                    alert(
+                        `Máximo de ${data.maxAllowed} assentos permitidos nesta seção!`
+                    );
+                },
+            };
+
+            const seatMap = new SeatMap("#seatmap-container", options);
+
+            // Para obter assentos selecionados
+            console.log(seatMap.getSelectedSeats());
+
+            $(document).ready(function () {
+                $(document).keydown(function (e) {
+                    if (e.which === 27) {
+                        // 27 é o código da tecla ESC
+                        // Ação a ser executada ao pressionar ESC
+                        console.log(seatMap.getSelectedSeats());
+                    }
+                });
+            });
+
+            // Para destruir o seatmap
+            // seatMap.destroy();
+        </script>
+    </body>
+</html>
