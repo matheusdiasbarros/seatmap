@@ -22,6 +22,7 @@ export class SeatMap {
             sections: [], // Configurações das seções especiais
             maxSeatsPerSection: {}, // Limite de assentos por seção
             exclusiveSection: null, // Seção exclusiva para seleção
+            showLegends: true,
             // Eventos
             onSelect: null, // Callback quando assento é selecionado
             onDeselect: null, // Callback quando assento é desselecionado
@@ -198,7 +199,7 @@ export class SeatMap {
                 this.container.append(rowDiv);
             }
         }
-        this.createLegend(); // Cria a legenda
+        if (this.options.showLegends) this.showLegends(); // Cria a legenda
     }
 
     /**
