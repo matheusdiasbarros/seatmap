@@ -199,7 +199,7 @@ export class SeatMap {
                 this.container.append(rowDiv);
             }
         }
-        if (this.options.showLegends) this.showLegends(); // Cria a legenda
+        if (this.options.showLegends) this.createLegend(); // Cria a legenda
     }
 
     /**
@@ -326,6 +326,20 @@ export class SeatMap {
     renderMap() {
         this.container.empty();
         this.createMap();
+    }
+
+    /**
+     * Atualiza as opções do plugin
+     * @param {object} newOptions - Opções novas
+     * @returns {void}
+     */
+    updateOptions(newOptions) {
+        // Atualiza as opções mesclando as atuais com as novas
+        this.options = { ...this.options, ...newOptions };
+        // Remove eventos e conteúdo atual
+        this.destroy();
+        // Re-inicializa o plugin para renderizar com as novas opções
+        this.init();
     }
 
     /**
