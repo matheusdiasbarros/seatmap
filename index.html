@@ -17,12 +17,12 @@
         <div id="seatmap-container"></div>
 
         <script type="module">
-            import { SeatMap } from "./seatmap-plugin.js"; // Caminho correto para o arquivo
+            import { SeatMap } from "./seatmap-plugin.js";
             const options = {
-                rows: 25,
-                cols: 25,
+                rows: 10,
+                cols: 10,
                 // exclusiveSection: "MeioID", // Nome da seção exclusiva
-                verticalAisles: [4, 6],
+                verticalAisles: [4, 6, 8],
                 horizontalAisles: [4, 8],
                 disabledSeats: [
                     { row: 1, col: 1 },
@@ -37,7 +37,7 @@
                 maxSeatsPerSection: {
                     FrenteID: 2,
                     // MeioID: 3,
-                    default: 1,
+                    default: 5,
                 },
                 sections: [
                     {
@@ -50,38 +50,26 @@
                     {
                         label: "Meio",
                         id: "MeioID",
-                        color: "orange",
+                        color: "green",
                         rows: [4, 5, 6],
                         columns: [1, 2, 3],
                     },
                 ],
                 onSelect: (seatId) => console.log("Selecionado:", seatId),
                 onDeselect: (seatId) => console.log("Deselecionado:", seatId),
-                onMaxSeatsReached: (data) => {
-                    console.log("Limite atingido na seção", data.section);
-                    alert(
-                        `Máximo de ${data.maxAllowed} assentos permitidos nesta seção!`
-                    );
-                },
+                onMaxSeatsReached: (data) => console.log("Limite atingido na seção", data.section),
             };
 
             const seatMap = new SeatMap("#seatmap-container", options);
 
-            // Para obter assentos selecionados
-            console.log(seatMap.getSelectedSeats());
 
             $(document).ready(function () {
                 $(document).keydown(function (e) {
                     if (e.which === 27) {
-                        // 27 é o código da tecla ESC
-                        // Ação a ser executada ao pressionar ESC
                         console.log(seatMap.getSelectedSeats());
                     }
                 });
             });
-
-            // Para destruir o seatmap
-            // seatMap.destroy();
         </script>
     </body>
 </html>

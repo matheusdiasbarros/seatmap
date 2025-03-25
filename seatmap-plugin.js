@@ -48,7 +48,6 @@ export class SeatMap {
     init() {
         this.createSeatMap(); // Cria a estrutura do mapa
         this.bindEvents(); // Configura os eventos
-        this.updateSectionLimits(); // Aplica limites de seção
     }
 
     /**
@@ -257,7 +256,7 @@ export class SeatMap {
      * @returns {object} Informações da seção {section: string, color: string}
      */
     getSeatInfo(row, col) {
-        let result = { section: null, id: null,color: "red" };
+        let result = { section: null, id: null, color: "red" };
         this.options.sections.forEach((section) => {
             if (section.rows.includes(row) && section.columns.includes(col)) {
                 result.section = section.label;
@@ -279,7 +278,6 @@ export class SeatMap {
 
             // Verifica limite de assentos na seção
             const maxSeats = this.options.maxSeatsPerSection[section] || 0;
-            console.log(section, maxSeats, this.sectionCounts[section]);
 
             // Verifica se o limite de assentos foi atingido
             if (maxSeats === 0 || this.sectionCounts[section] >= maxSeats) {
@@ -321,7 +319,17 @@ export class SeatMap {
     }
 
     /**
+     * Renderiza o mapa novamente
+     * @returns {void}
+     */
+    renderMap() {
+        this.container.empty();
+        this.createMap();
+    }
+
+    /**
      * Destroi a instância do plugin
+     * @returns {void}
      */
     destroy() {
         this.container.off("click");

@@ -40,6 +40,7 @@
     font-size: 12px;
 }
 .sm-disable {
+    opacity: 0.8;
     background-color: gray !important;
     cursor: not-allowed !important;
 }
@@ -58,6 +59,8 @@
 }
 
 .sm-disable-click-seat {
+    opacity: 0.3 !important;
+    transform: scale(0.9) !important;
     background-color: gray !important;
     cursor: not-allowed;
     opacity: 0.5;
