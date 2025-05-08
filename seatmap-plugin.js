@@ -13,8 +13,14 @@ export class SeatMap {
     constructor(container, options) {
         // Configurações padrão
         this.defaultOptions = {
-            rows: 0, // Número total de fileiras de assentos
-            cols: 0, // Número total de colunas de assentos
+            floors: 1, // Número de andares
+            floorsLabels: ["Térreo"], // Rótulos dos andares
+            showFloorLabels: false, // Exibe rótulos dos andares
+            rows: [0], // Número total de fileiras de assentos
+            cols: [0], // Número total de colunas de assentos
+            stage: [1, 1], // Extensão do palco
+            showStage: false, // Exibe a extensão do palco
+            stageLabel: "Palco", // Rótulo da extensão do palco
             disabledSeats: [], // Lista de assentos desabilitados
             excludedSeats: [], // Lista de assentos excluídos (espaços vazios)
             verticalAisles: [], // Posições dos corredores verticais
@@ -22,7 +28,7 @@ export class SeatMap {
             sections: [], // Configurações das seções especiais
             maxSeatsPerSection: {}, // Limite de assentos por seção
             exclusiveSection: null, // Seção exclusiva para seleção
-            showLegends: true,
+            showLegends: false,
             // Eventos
             onSelect: null, // Callback quando assento é selecionado
             onDeselect: null, // Callback quando assento é desselecionado
@@ -72,134 +78,236 @@ export class SeatMap {
     createSeatMap() {
         this.container.empty(); // Limpa o container
 
-        // Ajusta posições dos corredores considerando deslocamentos
-        const adjustedVerticalAisles = this.adjustAislePositions(
-            this.options.verticalAisles.slice()
-        );
-        const adjustedHorizontalAisles = this.adjustAislePositions(
-            this.options.horizontalAisles.slice()
-        );
+        // Cria container para manipular com scroll o mapa
+        const $scroll = $('<div class="sm-scroll"></div>');
+        const $inner = $('<div class="sm-inner"></div>');
+        $scroll.append($inner);
+        this.container.append($scroll);
 
-        // Calcula o total de colunas e fileiras (considerando corredores)
-        const totalColsDisplay =
-            this.options.cols + this.options.verticalAisles.length;
-        const totalRowsDisplay =
-            this.options.rows + this.options.horizontalAisles.length;
+        var seatRows = this.getCumulativeRows(this.options.rows); // Calcula as fileiras cumulativas
+        for (let f = 0; f < this.options.floors; f++) {
+            // Para cada andar
+            const divFloor = $('<div class="sm-floor"></div>');
 
-        // Cria header das colunas
-        const headerRow = $('<div class="sm-seat-row"></div>');
-        headerRow.append($('<div class="sm-seat-cell sm-empty-cell"></div>'));
-
-        // Preenche header com números das colunas
-        let seatCol = 0;
-        for (let d = 1; d <= totalColsDisplay; d++) {
-            if (adjustedVerticalAisles.includes(d)) {
-                // Se for um corredor vertical
-                headerRow.append(
-                    $('<div class="sm-seat-cell sm-space sm-col-header"></div>')
+            if (this.options.showFloorLabels) {
+                const floorLabel = $(
+                    '<div class="sm-floor-label">' +
+                        this.options.floorsLabels[f] +
+                        "</div>"
                 );
-            } else {
-                seatCol++;
-                headerRow.append(
-                    $('<div class="sm-seat-cell sm-col-header"></div>').text(
-                        seatCol
-                    )
-                );
+                // Adiciona o label no início do container
+                divFloor.prepend(floorLabel);
             }
-        }
-        this.container.append(headerRow);
 
-        // Cria as linhas de assentos
-        let seatRow = 0;
-        for (let r = 1; r <= totalRowsDisplay; r++) {
-            if (adjustedHorizontalAisles.includes(r)) {
-                // Se for um corredor horizontal
-                const corridorRow = $('<div class="sm-seat-row"></div>');
-                corridorRow.append(
-                    $('<div class="sm-seat-cell sm-space sm-row-header"></div>')
-                );
+            // Filtra os valores inválidos dos corredores
+            const validVerticalAisles = (
+                this.options.verticalAisles[f] || []
+            ).filter(
+                function (pos) {
+                    return pos <= this.options.cols[f];
+                }.bind(this)
+            );
+
+            const validHorizontalAisles = (
+                this.options.horizontalAisles[f] || []
+            ).filter(
+                function (pos) {
+                    return pos <= this.options.rows[f];
+                }.bind(this)
+            );
+
+            // Ajusta posições dos corredores considerando deslocamentos
+            const adjustedVerticalAisles = this.adjustAislePositions(
+                validVerticalAisles.slice()
+            );
+            const adjustedHorizontalAisles = this.adjustAislePositions(
+                validHorizontalAisles.slice()
+            );
+
+            // Calcula o total de colunas e fileiras (considerando corredores)
+            const totalColsDisplay =
+                parseInt(this.options.cols[f]) + validVerticalAisles.length;
+            const totalRowsDisplay =
+                parseInt(this.options.rows[f]) + validHorizontalAisles.length;
+
+            if (f === 0 && this.options.showStage) {
+                // Se for o primeiro andar e mostrar o palco estiver habilitado
+                let seatColStage = 0;
+                let stageContainer = null; // Div que agrupa as células do palco
+                const stageStart = this.options.stage[0];
+                const stageEnd = this.options.stage[1];
+
+                // Cria a fileira do palco
+                const stageRow = $('<div class="sm-seat-row"></div>');
+                stageRow.append($('<div class="sm-cell sm-empty-cell"></div>'));
+
                 for (let d = 1; d <= totalColsDisplay; d++) {
-                    corridorRow.append(
-                        $('<div class="sm-seat-cell sm-space"></div>')
-                    );
-                }
-                this.container.append(corridorRow);
-            } else {
-                seatRow++;
-                const rowDiv = $('<div class="sm-seat-row"></div>');
-                const rowLabel = this.numberToColumn(seatRow);
+                    const isVerticalAisle = adjustedVerticalAisles.includes(d);
+                    // Incrementa seatColStage somente se não for corredor vertical
+                    if (!isVerticalAisle) {
+                        seatColStage++;
+                    }
 
-                // Adiciona label da fileira
-                rowDiv.append(
-                    $('<div class="sm-seat-cell sm-row-header"></div>').text(
-                        rowLabel
-                    )
-                );
+                    // Verifica se o corredor está dentro da extensão do palco
+                    const seatIndexEffective = isVerticalAisle
+                        ? seatColStage + 1 // corredor “aponta” para a próxima cadeira
+                        : seatColStage; // cadeira real
 
-                // Preenche a linha com assentos
-                let seatColCounter = 0;
-                for (let d = 1; d <= totalColsDisplay; d++) {
-                    if (adjustedVerticalAisles.includes(d)) {
-                        // Se for um corredor vertical
-                        rowDiv.append(
-                            $('<div class="sm-seat-cell sm-space"></div>')
-                        );
-                    } else {
-                        seatColCounter++;
-                        const seatId = rowLabel + seatColCounter;
-                        const seatDiv = $(
-                            '<div class="sm-seat-cell sm-seat"></div>'
-                        )
-                            .text(seatId)
-                            .data("id", seatId);
+                    const isStage =
+                        seatIndexEffective >= stageStart &&
+                        seatIndexEffective <= stageEnd;
 
-                        // Pega as configurações do assento
-                        const seatInfo = this.getSeatInfo(
-                            seatRow,
-                            seatColCounter
-                        );
-                        const isDisabled = this.options.disabledSeats.some(
-                            // Verifica se o assento está desabilitado
-                            (s) => s.row === seatRow && s.col === seatColCounter
-                        );
-                        const isExcluded = this.options.excludedSeats.some(
-                            // Verifica se o assento é excluido (espaço em branco)
-                            (s) => s.row === seatRow && s.col === seatColCounter
-                        );
-                        const isExclusiveDisabled = // Verifica se o assento fora da seção exclusiva
-                            this.options.exclusiveSection &&
-                            seatInfo.id !== this.options.exclusiveSection;
-
-                        // Aplica regras de exibição
-                        // Se for um assento excluido
-                        if (isExcluded) {
-                            rowDiv.append(
-                                $('<div class="sm-seat-cell sm-space"></div>')
+                    if (isStage) {
+                        // Se ainda não foi criado o container, cria-o
+                        if (!stageContainer) {
+                            stageContainer = $(
+                                '<div class="sm-stage-container"></div>'
                             );
-                            continue;
                         }
-
-                        // Se for um assento desabilitado
-                        if (isDisabled || isExclusiveDisabled) {
-                            seatDiv.addClass("sm-disable-click-seat");
-                        } else {
-                            seatDiv.addClass("sm-click-seat");
+                        // Cria a célula do palco
+                        const cell = $('<div class="sm-cell sm-stage"></div>');
+                        stageContainer.append(cell);
+                    } else {
+                        // Se estiver fora da extensão do palco e o container estiver aberto, fecha-o
+                        if (stageContainer) {
+                            stageRow.append(stageContainer);
+                            stageContainer = null;
                         }
-
-                        // Aplica estilo da seção
-                        if (seatInfo.section) {
-                            seatDiv
-                                .data("section", seatInfo.id)
-                                .css("background-color", seatInfo.color);
-                        }
-
-                        rowDiv.append(seatDiv);
+                        // Cria a célula normal (de espaço)
+                        const cell = $('<div class="sm-cell sm-space"></div>');
+                        stageRow.append(cell);
                     }
                 }
-                this.container.append(rowDiv);
+                // Se o container ainda estiver aberto ao final do loop, o adiciona
+                if (stageContainer) {
+                    stageRow.append(stageContainer);
+                }
+                divFloor.append(stageRow);
             }
+
+            // Cria header das colunas
+            const headerRow = $('<div class="sm-seat-row"></div>');
+            headerRow.append($('<div class="sm-cell sm-empty-cell"></div>'));
+
+            // Preenche header com números das colunas
+            let seatCol = 0;
+            for (let d = 1; d <= totalColsDisplay; d++) {
+                if (adjustedVerticalAisles.includes(d)) {
+                    // Se for um corredor vertical
+                    headerRow.append(
+                        $('<div class="sm-cell sm-space sm-col-header"></div>')
+                    );
+                } else {
+                    seatCol++;
+                    headerRow.append(
+                        $('<div class="sm-cell sm-col-header"></div>').text(
+                            seatCol
+                        )
+                    );
+                }
+            }
+            divFloor.append(headerRow);
+
+            // Cria as linhas de assentos
+            let seatRow = seatRows[f];
+            for (let r = 1; r <= totalRowsDisplay; r++) {
+                if (adjustedHorizontalAisles.includes(r)) {
+                    // Se for um corredor horizontal
+                    const corridorRow = $('<div class="sm-seat-row"></div>');
+                    corridorRow.append(
+                        $('<div class="sm-cell sm-space sm-row-header"></div>')
+                    );
+                    for (let d = 1; d <= totalColsDisplay; d++) {
+                        corridorRow.append(
+                            $('<div class="sm-cell sm-space"></div>')
+                        );
+                    }
+                    divFloor.append(corridorRow);
+                } else {
+                    seatRow++;
+                    const rowDiv = $('<div class="sm-seat-row"></div>');
+                    const rowLabel = this.numberToColumn(seatRow);
+
+                    // Adiciona label da fileira
+                    rowDiv.append(
+                        $('<div class="sm-cell sm-row-header"></div>').text(
+                            rowLabel
+                        )
+                    );
+
+                    // Preenche a linha com assentos
+                    let seatColCounter = 0;
+                    for (let d = 1; d <= totalColsDisplay; d++) {
+                        if (adjustedVerticalAisles.includes(d)) {
+                            // Se for um corredor vertical
+                            rowDiv.append(
+                                $('<div class="sm-cell sm-space"></div>')
+                            );
+                        } else {
+                            seatColCounter++;
+                            const seatId = rowLabel + seatColCounter;
+                            const seatDiv = $(
+                                '<div class="sm-cell sm-seat"></div>'
+                            )
+                                .text(seatId)
+                                .data("id", seatId);
+
+                            // Pega as configurações do assento
+                            const seatInfo = this.getSeatInfo(
+                                seatRow,
+                                seatColCounter
+                            );
+                            const isDisabled = this.options.disabledSeats.some(
+                                // Verifica se o assento está desabilitado
+                                (s) =>
+                                    s.row === seatRow &&
+                                    s.col === seatColCounter
+                            );
+                            const isExcluded = this.options.excludedSeats.some(
+                                // Verifica se o assento é excluido (espaço em branco)
+                                (s) =>
+                                    s.row === seatRow &&
+                                    s.col === seatColCounter
+                            );
+                            const isExclusiveDisabled = // Verifica se o assento fora da seção exclusiva
+                                this.options.exclusiveSection &&
+                                seatInfo.id !== this.options.exclusiveSection;
+
+                            // Aplica regras de exibição
+                            // Se for um assento excluido
+                            if (isExcluded) {
+                                rowDiv.append(
+                                    $('<div class="sm-cell sm-space"></div>')
+                                );
+                                continue;
+                            }
+
+                            // Se for um assento desabilitado
+                            if (isDisabled || isExclusiveDisabled) {
+                                seatDiv.addClass("sm-disable-click-seat");
+                            } else {
+                                seatDiv.addClass("sm-click-seat");
+                            }
+
+                            // Aplica estilo da seção
+                            if (seatInfo.section) {
+                                seatDiv
+                                    .data("section", seatInfo.id)
+                                    .css("background-color", seatInfo.color);
+                            }
+
+                            rowDiv.append(seatDiv);
+                        }
+                    }
+                    divFloor.append(rowDiv);
+                }
+            }
+            $inner.append(divFloor);
         }
         if (this.options.showLegends) this.createLegend(); // Cria a legenda
+        $(".sm-stage-container").append(
+            '<div class="sm-stage-label">' + this.options.stageLabel + "</div>"
+        );
     }
 
     /**
@@ -266,6 +374,21 @@ export class SeatMap {
             }
         });
         return result;
+    }
+
+    /**
+     * Calcula a soma cumulativa das fileiras
+     * @param {array} rows - Array de fileiras
+     * @returns {array} Array com a soma cumulativa
+     */
+    getCumulativeRows(rows) {
+        var cumulative = [];
+        var sum = 0;
+        $.each(rows, function (index, value) {
+            cumulative.push(sum);
+            sum += parseInt(value);
+        });
+        return cumulative;
     }
 
     /**

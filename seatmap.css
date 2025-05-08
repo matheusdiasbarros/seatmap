@@ -1,88 +1,175 @@
-.sm-seat-row {
+/* -----------------------------------------------------------
+   1. CONTAINERS E LAYOUT BÁSICO
+----------------------------------------------------------- */
+
+/* Envoltório com rolagem horizontal (scroll lateral)        */
+.sm-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;   /* impede scroll vertical          */
+}
+
+/* Conteúdo interno que empilha os andares verticalmente      */
+.sm-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: max-content;   /* cresce até o maior andar        */
+    margin: 0 auto;       /* centralizado dentro do scroll   */
+}
+
+/* -----------------------------------------------------------
+   2. ANDAR (FLOOR)
+----------------------------------------------------------- */
+
+.sm-floor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 20px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+/* Rótulo opcional de andar — posicione via transform se
+   quiser deixá-lo vertical à esquerda do mapa               */
+.sm-floor-label {
+    align-self: flex-start;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* -----------------------------------------------------------
+   3. PALCO
+----------------------------------------------------------- */
+
+.sm-stage-container {          /* agrupa células do palco   */
+    display: flex;
+    position: relative;
+}
+
+.sm-stage {
+    width: 33px;               /* mesmo tamanho das células */
+    height: 36px;
+    background-color: #ccc;
+}
+
+.sm-stage-label {              /* texto central “Palco”     */
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* -----------------------------------------------------------
+   4. LINHAS E CÉLULAS GENÉRICAS
+----------------------------------------------------------- */
+
+.sm-seat-row {                 /* linha (assentos/header)   */
     display: flex;
 }
-.sm-seat-cell {
+
+.sm-cell {                     /* base para todas células   */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 0 0 auto;
+    flex: 0 0 auto;            /* não cresce com flex-box   */
 }
+
+/* Tamanho padrão de QUALQUER célula                         */
 .sm-empty-cell,
 .sm-col-header,
 .sm-row-header,
 .sm-seat,
 .sm-space {
-    width: 30px;
-    height: 35px;
-    margin: 5px;
+    width: 25px;
+    height: 28px;
+    margin: 4px;
+    font-size: 15px;
 }
-.sm-col-header,
-.sm-space.sm-col-header {
-    margin-bottom: 0px;
-}
-.sm-row-header,
-.sm-space.sm-row-header {
-    margin-right: 0px;
-}
-.sm-empty-cell {
-    margin-bottom: 0px;
-    margin-right: 0px;
-}
+
+/* -----------------------------------------------------------
+   5. HEADERS DE LINHA E COLUNA
+----------------------------------------------------------- */
+
 .sm-col-header,
 .sm-row-header {
     font-weight: bold;
 }
+
+.sm-col-header,
+.sm-space.sm-col-header { margin-bottom: 0; }
+
+.sm-row-header,
+.sm-space.sm-row-header { margin-right: 0; }
+
+.sm-empty-cell { margin: 4px 0 0 4px; }
+
+/* -----------------------------------------------------------
+   6. ASSENTOS E ESTADOS
+----------------------------------------------------------- */
+
 .sm-seat {
-    background-color: red;
-    color: white;
+    background-color: red;     /* cor pode mudar por seção  */
+    color: #fff;
     border-radius: 7px 7px 0 0;
+    font-size: 9px;
     font-weight: bold;
-    font-size: 12px;
 }
+
+/* Assento permanentemente fora de uso                       */
 .sm-disable {
     opacity: 0.8;
     background-color: gray !important;
     cursor: not-allowed !important;
 }
+
+/* Assento já escolhido pelo usuário                         */
 .sm-selected {
     opacity: 0.5 !important;
     transform: scale(0.9);
 }
 
+/* Assentos clicáveis — interação/hover                      */
 .sm-click-seat {
     cursor: pointer;
     transition: transform 0.2s;
 }
-
 .sm-click-seat:hover {
-    transform: scale(1.2);
+    transform: scale(1.4);
 }
 
+/* Assentos visíveis mas não interativos                     */
 .sm-disable-click-seat {
     opacity: 0.3 !important;
-    transform: scale(0.9) !important;
     background-color: gray !important;
+    transform: scale(0.9) !important;
     cursor: not-allowed;
-    opacity: 0.5;
     pointer-events: none;
 }
 
+/* -----------------------------------------------------------
+   7. LEGENDA
+----------------------------------------------------------- */
+
 .sm-legend {
-    margin-top: 1rem;
     display: inline-block;
-    border: 1px solid #ccc;
+    margin-top: 1rem;
     padding: 5px;
+    border: 1px solid #ccc;
 }
 
 .sm-legend-item {
-    margin: 5px;
     display: flex;
     align-items: center;
+    margin: 5px;
 }
 
 .sm-legend-color {
-    width: 30px;
-    height: 35px;
+    width: 25px;
+    height: 28px;
     border-radius: 7px 7px 0 0;
 }
 
