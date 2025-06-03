@@ -112,12 +112,52 @@
 ----------------------------------------------------------- */
 
 .sm-seat {
-    background-color: red;     /* cor pode mudar por seção  */
+    background-color: darkgreen;     /* cor pode mudar por seção  */
     color: #fff;
     border-radius: 7px 7px 0 0;
     font-size: 9px;
     font-weight: bold;
+    position: relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
 }
+
+.sm-seat-id { 
+    line-height:11px; 
+}
+
+.sm-seat-extra {
+    font-size: 7px; 
+    pointer-events: none;
+} 
+
+.sm-seat-icon  {
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    pointer-events: none;
+    fill: #ffffff;
+}
+
+.sm-wheelchair {
+    border-radius:4px;
+    width: 33px;
+    height: 36px;
+    margin: 0;
+}
+
+.sm-obese {
+    border: #333 solid 2px;
+    width: 29px;
+    height: 32px;
+    margin: 2px;
+}
+
+/* .sm-companion {
+
+} */
 
 /* Assento permanentemente fora de uso                       */
 .sm-disable {
@@ -176,4 +216,32 @@
 .sm-legend-text {
     margin-left: 5px;
     font-weight: bold;
+}
+
+.sm-legend-seat {
+    width: 25px;
+    height: 28px;
+    border: 1px solid #7c7c7c;
+    border-radius: 7px 7px 0 0;
+    padding: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    background: transparent;      /* sem cor */
+}
+
+.sm-legend-seat span {
+    font-size: 8px;
+    line-height: 12px;
+    font-weight: 700;
+    color: #7c7c7c;
+}
+
+.sm-legend-seat-icon {
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    pointer-events: none;
+    fill: #7c7c7c;
 }

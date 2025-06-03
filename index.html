@@ -14,16 +14,19 @@
     </head>
     <body>
         <!-- Na sua página -->
+        <div id="seatmap-legend"></div>
         <div id="seatmap-container"></div>
 
         <script type="module">
             import { SeatMap } from "./seatmap-plugin.js";
             const options = {
-                rows: 10,
-                cols: 10,
+                rows: [10],
+                cols: [10],
                 // exclusiveSection: "MeioID", // Nome da seção exclusiva
-                verticalAisles: [4, 6, 8],
-                horizontalAisles: [4, 8],
+                verticalAisles: [[4, 6, 8]],
+                horizontalAisles: [[4, 8]],
+                showLegends: true,
+                legendTarget: "#seatmap-legend",
                 disabledSeats: [
                     { row: 1, col: 1 },
                     { row: 1, col: 2 },
@@ -34,9 +37,25 @@
                     { row: 2, col: 2 },
                     { row: 2, col: 3 },
                 ],
+                wheelchairSeats: [
+                    { row: 3, col: 1 },
+                    { row: 4, col: 5 },
+                    { row: 5, col: 1 },
+                    { row: 9, col: 1 },
+                ],
+                obeseSeats: [
+                    { row: 3, col: 2 },
+                    { row: 5, col: 2 },
+                    { row: 9, col: 2 },
+                ],
+                companionSeats: [
+                    { row: 3, col: 3 },
+                    { row: 5, col: 3 },
+                    { row: 9, col: 3 },
+                ],
                 maxSeatsPerSection: {
                     FrenteID: 2,
-                    // MeioID: 3,
+                    MeioID: 3,
                     default: 5,
                 },
                 sections: [
@@ -44,20 +63,38 @@
                         label: "Frente",
                         id: "FrenteID",
                         color: "blue",
-                        rows: [1, 2, 3],
-                        columns: [1, 2, 3],
+                        seats: [
+                            {row: 1, col: 1},
+                            {row: 1, col: 2},
+                            {row: 1, col: 3},
+                            {row: 2, col: 1},
+                            {row: 2, col: 2},
+                            {row: 2, col: 3},
+                            {row: 3, col: 1},
+                            {row: 3, col: 2},
+                            {row: 3, col: 3},
+                        ]
                     },
                     {
                         label: "Meio",
                         id: "MeioID",
-                        color: "green",
-                        rows: [4, 5, 6],
-                        columns: [1, 2, 3],
+                        color: "red",
+                        seats: [
+                            {row: 4, col: 1},
+                            {row: 4, col: 2},
+                            {row: 4, col: 3},
+                            {row: 5, col: 1},
+                            {row: 5, col: 2},
+                            {row: 5, col: 3},
+                            {row: 6, col: 1},
+                            {row: 6, col: 2},
+                            {row: 6, col: 3},
+                        ]
                     },
                 ],
-                onSelect: (seatId) => console.log("Selecionado:", seatId),
-                onDeselect: (seatId) => console.log("Deselecionado:", seatId),
-                onMaxSeatsReached: (data) => console.log("Limite atingido na seção", data.section),
+                onSelect: (data) => console.log("Selecionado:", data.seatId, data.wheelchair, data.obese, data.companion),
+                onDeselect: (data) => console.log("Deselecionado:", data.seatId, data.wheelchair, data.obese, data.companion),
+                onMaxSeatsReached: (data) => console.log("Limite atingido na seção", data.section, data.seatId, data.maxAllowed),
             };
 
             const seatMap = new SeatMap("#seatmap-container", options);
@@ -67,6 +104,7 @@
                 $(document).keydown(function (e) {
                     if (e.which === 27) {
                         console.log(seatMap.getSelectedSeats());
+                        console.log(seatMap.getSectionCounts());
                     }
                 });
             });
