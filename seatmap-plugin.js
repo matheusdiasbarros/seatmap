@@ -169,7 +169,9 @@ export class SeatMap {
 
                     // Verifica se o corredor está dentro da extensão do palco
                     const seatIndexEffective = isVerticalAisle
-                        ? seatColStage + 1 // corredor “aponta” para a próxima cadeira
+                        ? seatColStage < stageStart 
+                            ? seatColStage 
+                            : seatColStage + 1 // corredor “aponta” para a próxima cadeira se estiver criando palco
                         : seatColStage; // cadeira real
 
                     const isStage =
@@ -399,17 +401,22 @@ export class SeatMap {
 
         const legendContainer = $('<div class="sm-legend"></div>');
 
-        /* ---------- 1. Seções coloridas normais ---------- */
+        /* ---------- Seções coloridas normais ---------- */
         this.options.sections.forEach((section) => {
             legendContainer.append(makeColorItem(section.color, section.label));
         });
 
-        /* ---------- 2. Categorias especiais ---------- */
+        /* ---------- Categorias especiais ---------- */
         if (this.options.wheelchairSeats?.length) {
             legendContainer.append(
-                makeSeatItem(WHEELCHAIR_SVG.replace('sm-seat-icon','sm-legend-seat-icon')
-                , "Cadeirante"
-            ));
+                makeSeatItem(
+                    WHEELCHAIR_SVG.replace(
+                        "sm-seat-icon",
+                        "sm-legend-seat-icon"
+                    ),
+                    "Cadeirante"
+                )
+            );
         }
         if (this.options.obeseSeats?.length) {
             legendContainer.append(makeSeatItem("<span>O</span>", "Obeso"));
@@ -420,10 +427,10 @@ export class SeatMap {
             );
         }
 
-        /* ---------- 3. Assento comum ---------- */
+        /* ---------- Assento comum ---------- */
         legendContainer.append(makeColorItem("darkgreen", "Comum"));
 
-        /* ---------- 4. Insere no alvo ---------- */
+        /* ---------- Insere no alvo ---------- */
         const $target = this.options.legendTarget
             ? $(this.options.legendTarget)
             : this.container;

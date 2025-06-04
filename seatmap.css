@@ -179,6 +179,8 @@
 }
 .sm-click-seat:hover {
     transform: scale(1.4);
+    z-index: 1;
+    border:#333 solid 2px;
 }
 
 /* Assentos visíveis mas não interativos                     */
