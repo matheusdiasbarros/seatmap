@@ -61,7 +61,7 @@ export class SeatMap {
         // Conjunto de assentos selecionados
         this.selectedSeats = new Set();
         // Contadores de assentos por seção
-        this.sectionCounts = {};
+        this.sectionCounts = [];
         // Seção ativa (para modo exclusivo)
         this.activeSection = this.options.exclusiveSection;
         // Assentos do mapa
@@ -569,13 +569,15 @@ export class SeatMap {
             // Alterna estado de seleção
             seat.toggleClass("sm-selected");
 
+            const seatObj = this.allSeats.find((s) => s.id === seatId);
+
             if (seat.hasClass("sm-selected")) {
-                this.selectedSeats.add(seatId);
+                this.selectedSeats.add(seatObj);
                 this.sectionCounts[section] =
                     (this.sectionCounts[section] || 0) + 1;
                 this.options.onSelect?.(payload);
             } else {
-                this.selectedSeats.delete(seatId);
+                this.selectedSeats.delete(seatObj);
                 this.sectionCounts[section] =
                     (this.sectionCounts[section] || 0) - 1;
                 this.options.onDeselect?.(payload);
@@ -647,10 +649,10 @@ export class SeatMap {
 
     /**
      * Obter dados de todos assentos
-     * @returns {array} Array de objetos com dados dos assentos
+     * @returns {object} Array de objetos com dados dos assentos
      */
     getAllSeats() {
-        return this.allSeats;
+        return { ...this.allSeats };
     }
 
     /**
