@@ -64,6 +64,8 @@ export class SeatMap {
         this.sectionCounts = {};
         // Seção ativa (para modo exclusivo)
         this.activeSection = this.options.exclusiveSection;
+        // Assentos do mapa
+        this.allSeats = [];
         // Inicializa o plugin
         this.init();
     }
@@ -169,8 +171,8 @@ export class SeatMap {
 
                     // Verifica se o corredor está dentro da extensão do palco
                     const seatIndexEffective = isVerticalAisle
-                        ? seatColStage < stageStart 
-                            ? seatColStage 
+                        ? seatColStage < stageStart
+                            ? seatColStage
                             : seatColStage + 1 // corredor “aponta” para a próxima cadeira se estiver criando palco
                         : seatColStage; // cadeira real
 
@@ -374,6 +376,21 @@ export class SeatMap {
                             });
 
                             rowDiv.append(seatDiv);
+
+                            // Determine o tipo
+                            let seatType = "normal";
+                            if (isWheel) seatType = "wheelchair";
+                            if (isObese) seatType = "obese";
+                            if (isCompan) seatType = "companion";
+
+                            this.allSeats.push({
+                                id: seatId,
+                                row: seatRow,
+                                col: seatColCounter,
+                                section: seatInfo.id || "default",
+                                type: seatType,
+                                disabled: isDisabled || isExclusiveDisabled,
+                            });
                         }
                     }
                     divFloor.append(rowDiv);
@@ -576,8 +593,64 @@ export class SeatMap {
         return Array.from(this.selectedSeats);
     }
 
+    /**
+     * Retorna a contagem de assentos por seção
+     * @returns {object} Contagem de assentos por seção
+     */
     getSectionCounts() {
         return { ...this.sectionCounts };
+    }
+
+    /**
+     * Quantidade total + quebra por tipo (normal, wheelchair, obese, companion)
+     * @returns {object} Quantidade total + quebra por tipo
+     */
+    getSeatTotals() {
+        const counts = {
+            total: 0,
+            normal: 0,
+            wheelchair: 0,
+            obese: 0,
+            companion: 0,
+        };
+        this.allSeats.forEach((s) => {
+            counts.total++;
+            counts[s.type]++;
+        });
+        return counts;
+    }
+
+    /**
+     * Total por seção (já excluídas as cadeiras removidas)
+     * @returns {object} Total por seção
+     */
+    getSectionTotals() {
+        const totals = {};
+        this.allSeats.forEach((s) => {
+            totals[s.section] = (totals[s.section] || 0) + 1;
+        });
+        return totals;
+    }
+
+    /**
+     * Disponibilidade: quantas clicáveis vs. desabilitadas
+     * @returns {object} Disponibilidade
+     */
+    getAvailabilityTotals() {
+        let available = 0,
+            disabled = 0;
+        this.allSeats.forEach((s) => {
+            s.disabled ? disabled++ : available++;
+        });
+        return { available, disabled };
+    }
+
+    /**
+     * Obter dados de todos assentos
+     * @returns {array} Array de objetos com dados dos assentos
+     */
+    getAllSeats() {
+        return this.allSeats;
     }
 
     /**
