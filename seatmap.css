@@ -122,6 +122,7 @@
     flex-direction:column;
     justify-content:flex-start;
     align-items:center;
+    padding-bottom: 2px;
 }
 
 .sm-seat-id { 
@@ -149,7 +150,6 @@
 }
 
 .sm-obese {
-    border: #333 solid 2px;
     width: 29px;
     height: 32px;
     margin: 2px;
@@ -180,7 +180,7 @@
 .sm-click-seat:hover {
     transform: scale(1.4);
     z-index: 1;
-    border:#333 solid 2px;
+    outline:#fff solid 2px;
 }
 
 /* Assentos visíveis mas não interativos                     */
@@ -206,13 +206,14 @@
 .sm-legend-item {
     display: flex;
     align-items: center;
-    margin: 5px;
+    margin: 0px;
 }
 
 .sm-legend-color {
     width: 25px;
     height: 28px;
     border-radius: 7px 7px 0 0;
+    margin: 4px;
 }
 
 .sm-legend-text {
@@ -225,12 +226,26 @@
     height: 28px;
     border: 1px solid #7c7c7c;
     border-radius: 7px 7px 0 0;
-    padding: 3px;
+    padding-bottom: 2px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    background: transparent;      /* sem cor */
+    background: #fff;
+    margin: 4px;
+}
+
+.sm-legend-wheelchair {
+    border-radius:4px;
+    width: 33px;
+    height: 36px;
+    margin: 0;
+}
+
+.sm-legend-obese {
+    width: 29px;
+    height: 32px;
+    margin: 2px;
 }
 
 .sm-legend-seat span {

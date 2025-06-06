@@ -2,7 +2,7 @@
 
 const WHEELCHAIR_SVG = `
 <svg class="sm-seat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <path
+    <path
         d="M192 96a48 48 0 1 0 0-96 48 48 0 1 0 0 96zM120.5 247.2c12.4-4.7 18.7-18.5
            14-30.9s-18.5-18.7-30.9-14C43.1 225.1 0 283.5 0 352c0 88.4 71.6 160
            160 160c61.2 0 114.3-34.3 141.2-84.7c6.2-11.7 1.8-26.2-9.9-32.5s-26.2
@@ -13,6 +13,28 @@ const WHEELCHAIR_SVG = `
            24.6 40.1 19.1l48-16c16.8-5.6 25.8-23.7 20.2-40.5s-23.7-25.8-40.5-20.2
            l-18.7 6.2-25.5-68c-11.7-31.2-41.6-51.9-74.9-51.9l-68.5 0-9.6-48 63.4
            0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-76.2 0z"/>
+</svg>`;
+
+const OBESE_SVG = `
+<svg class="sm-seat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <path 
+        d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3
+           0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 
+           0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8
+           12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0
+           45.3s32.8 12.5 45.3 0z"/>
+</svg>`;
+
+const COMPANION_SVG = `
+<svg class="sm-seat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+    <path 
+        d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 
+           304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 
+           512 0 498.7 0 482.3zM609.3 512l-137.8 0c5.4-9.4 8.6-20.3 
+           8.6-32l0-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2l61.4 0C567.8 320 640 
+           392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 
+           196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 
+           0 112 50.1 112 112s-50.1 112-112 112z"/>
 </svg>`;
 
 /**
@@ -333,9 +355,7 @@ export class SeatMap {
                             if (isObese) {
                                 seatDiv
                                     .addClass("sm-obese")
-                                    .append(
-                                        '<span class="sm-seat-extra">O</span>'
-                                    );
+                                    .append(OBESE_SVG);
                             }
 
                             // Se for um assento para companheiros de cadeirantes
@@ -343,7 +363,8 @@ export class SeatMap {
                                 seatDiv
                                     .addClass("sm-companion")
                                     .append(
-                                        '<span class="sm-seat-extra">AC</span>'
+                                        COMPANION_SVG
+                                        // '<span class="sm-seat-extra">AC</span>'
                                     );
                             }
 
@@ -426,26 +447,54 @@ export class SeatMap {
         /* ---------- Categorias especiais ---------- */
         if (this.options.wheelchairSeats?.length) {
             legendContainer.append(
-                makeSeatItem(
-                    WHEELCHAIR_SVG.replace(
-                        "sm-seat-icon",
-                        "sm-legend-seat-icon"
-                    ),
-                    "Cadeirante"
-                )
+                $('<div class="sm-legend-item"></div>')
+                    .append(
+                        $(
+                            '<div class="sm-legend-seat sm-legend-wheelchair"></div>'
+                        ).html(
+                            WHEELCHAIR_SVG.replace(
+                                "sm-seat-icon",
+                                "sm-legend-seat-icon"
+                            )
+                        )
+                    )
+                    .append(
+                        $('<span class="sm-legend-text"></span>').text(
+                            "Cadeirante"
+                        )
+                    )
             );
         }
         if (this.options.obeseSeats?.length) {
-            legendContainer.append(makeSeatItem("<span>O</span>", "Obeso"));
+            // legendContainer.append(makeSeatItem("<span>O</span>", "Obeso"));
+            legendContainer.append(
+                makeSeatItem(
+                    OBESE_SVG.replace(
+                        "sm-seat-icon",
+                        "sm-legend-seat-icon"
+                    ),
+                    "Obeso",
+                    "sm-legend-obese"
+                )
+            );
         }
         if (this.options.companionSeats?.length) {
+            // legendContainer.append(makeSeatItem("<span>AC</span>", "Acomp. cadeirante"));
             legendContainer.append(
-                makeSeatItem("<span>AC</span>", "Acomp. cadeirante")
+                makeSeatItem(
+                    COMPANION_SVG.replace(
+                        "sm-seat-icon",
+                        "sm-legend-seat-icon"
+                    ),
+                    "Acomp. cadeirante"
+                )
             );
         }
 
         /* ---------- Assento comum ---------- */
-        legendContainer.append(makeColorItem("darkgreen", "Comum"));
+        if (this.allSeats.some((s) => s.section === "default")) {
+            legendContainer.append(makeColorItem("darkgreen", "Comum"));
+        }
 
         /* ---------- Insere no alvo ---------- */
         const $target = this.options.legendTarget
@@ -467,10 +516,10 @@ export class SeatMap {
             return item;
         }
 
-        function makeSeatItem(innerHtml, label) {
+        function makeSeatItem(innerHtml, label, extraClass = "") {
             const item = $('<div class="sm-legend-item"></div>');
             item.append(
-                $('<div class="sm-legend-seat"></div>').html(innerHtml)
+                $(`<div class="sm-legend-seat ${extraClass}"></div>`).html(innerHtml)
             );
             item.append($('<span class="sm-legend-text"></span>').text(label));
             return item;
