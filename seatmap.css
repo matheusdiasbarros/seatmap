@@ -5,7 +5,7 @@
 /* Envoltório com rolagem horizontal (scroll lateral)        */
 .sm-scroll {
     overflow-x: auto;
-    overflow-y: hidden;   /* impede scroll vertical          */
+    overflow-y: hidden; /* impede scroll vertical          */
 }
 
 /* Conteúdo interno que empilha os andares verticalmente      */
@@ -13,8 +13,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: max-content;   /* cresce até o maior andar        */
-    margin: 0 auto;       /* centralizado dentro do scroll   */
+    width: max-content; /* cresce até o maior andar        */
+    margin: 0 auto; /* centralizado dentro do scroll   */
 }
 
 /* -----------------------------------------------------------
@@ -43,20 +43,23 @@
    3. PALCO
 ----------------------------------------------------------- */
 
-.sm-stage-container {          /* agrupa células do palco   */
+.sm-stage-container {
+    /* agrupa células do palco   */
     display: flex;
     position: relative;
 }
 
 .sm-stage {
-    width: 33px;               /* mesmo tamanho das células */
+    width: 33px; /* mesmo tamanho das células */
     height: 36px;
     background-color: #ccc;
 }
 
-.sm-stage-label {              /* texto central “Palco”     */
+.sm-stage-label {
+    /* texto central “Palco”     */
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     font-size: 1.5rem;
     font-weight: bold;
@@ -67,15 +70,17 @@
    4. LINHAS E CÉLULAS GENÉRICAS
 ----------------------------------------------------------- */
 
-.sm-seat-row {                 /* linha (assentos/header)   */
+.sm-seat-row {
+    /* linha (assentos/header)   */
     display: flex;
 }
 
-.sm-cell {                     /* base para todas células   */
+.sm-cell {
+    /* base para todas células   */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 0 0 auto;            /* não cresce com flex-box   */
+    flex: 0 0 auto; /* não cresce com flex-box   */
 }
 
 /* Tamanho padrão de QUALQUER célula                         */
@@ -100,41 +105,47 @@
 }
 
 .sm-col-header,
-.sm-space.sm-col-header { margin-bottom: 0; }
+.sm-space.sm-col-header {
+    margin-bottom: 0;
+}
 
 .sm-row-header,
-.sm-space.sm-row-header { margin-right: 0; }
+.sm-space.sm-row-header {
+    margin-right: 0;
+}
 
-.sm-empty-cell { margin: 4px 0 0 4px; }
+.sm-empty-cell {
+    margin: 4px 0 0 4px;
+}
 
 /* -----------------------------------------------------------
    6. ASSENTOS E ESTADOS
 ----------------------------------------------------------- */
 
 .sm-seat {
-    background-color: darkgreen;     /* cor pode mudar por seção  */
+    background-color: darkgreen; /* cor pode mudar por seção  */
     color: #fff;
     border-radius: 7px 7px 0 0;
     font-size: 9px;
     font-weight: bold;
     position: relative;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    align-items:center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     padding-bottom: 2px;
 }
 
-.sm-seat-id { 
-    line-height:11px; 
+.sm-seat-id {
+    line-height: 11px;
 }
 
 .sm-seat-extra {
-    font-size: 7px; 
+    font-size: 7px;
     pointer-events: none;
-} 
+}
 
-.sm-seat-icon  {
+.sm-seat-icon {
     width: 14px;
     height: 14px;
     margin-top: 2px;
@@ -143,7 +154,7 @@
 }
 
 .sm-wheelchair {
-    border-radius:4px;
+    border-radius: 4px;
     width: 33px;
     height: 36px;
     margin: 0;
@@ -158,6 +169,11 @@
 /* .sm-companion {
 
 } */
+
+.sm-fixed-selected {
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
 
 /* Assento permanentemente fora de uso                       */
 .sm-disable {
@@ -180,7 +196,7 @@
 .sm-click-seat:hover {
     transform: scale(1.4);
     z-index: 1;
-    outline:#fff solid 2px;
+    outline: #fff solid 2px;
 }
 
 /* Assentos visíveis mas não interativos                     */
@@ -236,7 +252,7 @@
 }
 
 .sm-legend-wheelchair {
-    border-radius:4px;
+    border-radius: 4px;
     width: 33px;
     height: 36px;
     margin: 0;

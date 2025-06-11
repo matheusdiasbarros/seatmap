@@ -63,6 +63,7 @@ export class SeatMap {
             wheelchairSeats: [], // Lista de assentos para cadeirantes
             obeseSeats: [], // Lista de assentos para obesos
             companionSeats: [], // Lista de assentos para acompanhantes de cadeirantes
+            lockedSeats: [], // Lista de assentos bloqueados (selecionados sem evento de clique)
             verticalAisles: [], // Posições dos corredores verticais
             horizontalAisles: [], // Posições dos corredores horizontais
             sections: [], // Configurações das seções especiais
@@ -331,6 +332,12 @@ export class SeatMap {
                                 seatColCounter
                             );
 
+                            const isLocked = this.isInList(
+                                this.options.lockedSeats,
+                                seatRow,
+                                seatColCounter
+                            );
+
                             // Verifica se o assento esta na lista de Assentos Excluidos
                             const isExcluded = this.isInList(
                                 this.options.excludedSeats,
@@ -353,19 +360,15 @@ export class SeatMap {
 
                             // Se for um assento para obesos
                             if (isObese) {
-                                seatDiv
-                                    .addClass("sm-obese")
-                                    .append(OBESE_SVG);
+                                seatDiv.addClass("sm-obese").append(OBESE_SVG);
                             }
 
                             // Se for um assento para companheiros de cadeirantes
                             if (isCompan) {
-                                seatDiv
-                                    .addClass("sm-companion")
-                                    .append(
-                                        COMPANION_SVG
-                                        // '<span class="sm-seat-extra">AC</span>'
-                                    );
+                                seatDiv.addClass("sm-companion").append(
+                                    COMPANION_SVG
+                                    // '<span class="sm-seat-extra">AC</span>'
+                                );
                             }
 
                             // Se for um assento excluido
@@ -376,13 +379,16 @@ export class SeatMap {
                                 continue;
                             }
 
-                            // Se for um assento desabilitado
-                            if (isDisabled || isExclusiveDisabled) {
+                            // Se for um assento travado ou desabilitado
+                            if (isLocked) {
+                                seatDiv.addClass(
+                                    "sm-fixed-selected sm-selected"
+                                );
+                            } else if (isDisabled || isExclusiveDisabled) {
                                 seatDiv.addClass("sm-disable-click-seat");
                             } else {
                                 seatDiv.addClass("sm-click-seat");
                             }
-
                             // Aplica estilo da seção
                             if (seatInfo.section) {
                                 seatDiv
@@ -469,10 +475,7 @@ export class SeatMap {
             // legendContainer.append(makeSeatItem("<span>O</span>", "Obeso"));
             legendContainer.append(
                 makeSeatItem(
-                    OBESE_SVG.replace(
-                        "sm-seat-icon",
-                        "sm-legend-seat-icon"
-                    ),
+                    OBESE_SVG.replace("sm-seat-icon", "sm-legend-seat-icon"),
                     "Obeso",
                     "sm-legend-obese"
                 )
@@ -519,7 +522,9 @@ export class SeatMap {
         function makeSeatItem(innerHtml, label, extraClass = "") {
             const item = $('<div class="sm-legend-item"></div>');
             item.append(
-                $(`<div class="sm-legend-seat ${extraClass}"></div>`).html(innerHtml)
+                $(`<div class="sm-legend-seat ${extraClass}"></div>`).html(
+                    innerHtml
+                )
             );
             item.append($('<span class="sm-legend-text"></span>').text(label));
             return item;
@@ -607,9 +612,9 @@ export class SeatMap {
                 }
             }
 
+            const seatObj = this.allSeats.find((s) => s.id === seatId);
             const payload = {
-                seatId,
-                section,
+                seat: seatObj,
                 wheelchair: seat.data("wheelchair") === true,
                 obese: seat.data("obese") === true,
                 companion: seat.data("companion") === true,
@@ -617,8 +622,6 @@ export class SeatMap {
 
             // Alterna estado de seleção
             seat.toggleClass("sm-selected");
-
-            const seatObj = this.allSeats.find((s) => s.id === seatId);
 
             if (seat.hasClass("sm-selected")) {
                 this.selectedSeats.add(seatObj);
@@ -734,5 +737,8 @@ export class SeatMap {
     destroy() {
         this.container.off("click");
         this.container.empty();
+        if (this.options.legendTarget) {
+            $(this.options.legendTarget).find(".sm-legend").remove();
+        }
     }
 }
