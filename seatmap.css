@@ -1,25 +1,54 @@
-/* -----------------------------------------------------------
-   1. CONTAINERS E LAYOUT BÁSICO
------------------------------------------------------------ */
+/* =========================================================
+    VARIABLES
+======================================================= */
+:root {
+    /* — Core sizes — */
+    --seat-w: 25px;
+    --seat-h: 28px;
+    --seat-gap: 4px; /* margem externa padrão */
+    --seat-radius: 7px 7px 0 0;
 
-/* Envoltório com rolagem horizontal (scroll lateral)        */
-.sm-scroll {
-    overflow-x: auto;
-    overflow-y: hidden; /* impede scroll vertical          */
+    --seat-wheel-w: calc(var(--seat-w) + var(--seat-gap)*2);
+    --seat-wheel-h: calc(var(--seat-h) + var(--seat-gap)*2);
+    --seat-obese-w: calc(var(--seat-w) + var(--seat-gap));
+    --seat-obese-h: calc(var(--seat-w) + var(--seat-gap));
+    --seat-obese-gap: calc(var(--seat-gap)/2);
+
+    --icon-size: 14px;
+
+    /* — Typography — */
+    --f-header: 1.5rem;
+    --f-seat: 9px;
+    --f-seat-extra: 7px;
+    --f-row-col: 15px;
+
+    /* — Colours — */
+    --c-seat: darkgreen;
+    --c-seat-disabled: gray;
+    --c-seat-hover-outline: #fff;
+
+    --c-border: #ccc;
+    --c-stage-bg: #ccc;
+    --c-stage-txt: #333;
+
+    --c-legend-txt: #7c7c7c;
+    --c-legend-border: #7c7c7c;
 }
 
-/* Conteúdo interno que empilha os andares verticalmente      */
+/* =========================================================
+    1. CONTAINERS & LAYOUT
+======================================================= */
+.sm-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 .sm-inner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: max-content; /* cresce até o maior andar        */
-    margin: 0 auto; /* centralizado dentro do scroll   */
+    width: max-content;
+    margin: 0 auto;
 }
-
-/* -----------------------------------------------------------
-   2. ANDAR (FLOOR)
------------------------------------------------------------ */
 
 .sm-floor {
     display: flex;
@@ -27,107 +56,85 @@
     align-items: flex-start;
     padding: 10px 20px;
     margin: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--c-border);
     border-radius: 10px;
 }
-
-/* Rótulo opcional de andar — posicione via transform se
-   quiser deixá-lo vertical à esquerda do mapa               */
 .sm-floor-label {
     align-self: flex-start;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: var(--f-header);
+    font-weight: 700;
 }
 
-/* -----------------------------------------------------------
-   3. PALCO
------------------------------------------------------------ */
-
+/* Stage */
 .sm-stage-container {
-    /* agrupa células do palco   */
     display: flex;
     position: relative;
 }
-
 .sm-stage {
-    width: 33px; /* mesmo tamanho das células */
-    height: 36px;
-    background-color: #ccc;
+    width: var(--seat-wheel-w);
+    height: var(--seat-wheel-h);
+    background: var(--c-stage-bg);
 }
-
 .sm-stage-label {
-    /* texto central “Palco”     */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
+    font-size: var(--f-header);
+    font-weight: 700;
+    color: var(--c-stage-txt);
 }
 
-/* -----------------------------------------------------------
-   4. LINHAS E CÉLULAS GENÉRICAS
------------------------------------------------------------ */
-
+/* =========================================================
+    2. CELLS (headers, assentos, espaços)
+======================================================= */
 .sm-seat-row {
-    /* linha (assentos/header)   */
     display: flex;
 }
 
 .sm-cell {
-    /* base para todas células   */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex: 0 0 auto; /* não cresce com flex-box   */
+    flex: 0 0 auto;
 }
 
-/* Tamanho padrão de QUALQUER célula                         */
 .sm-empty-cell,
 .sm-col-header,
 .sm-row-header,
 .sm-seat,
 .sm-space {
-    width: 25px;
-    height: 28px;
-    margin: 4px;
-    font-size: 15px;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    margin: var(--seat-gap);
+    font-size: var(--f-row-col);
 }
-
-/* -----------------------------------------------------------
-   5. HEADERS DE LINHA E COLUNA
------------------------------------------------------------ */
 
 .sm-col-header,
 .sm-row-header {
-    font-weight: bold;
+    font-weight: 700;
 }
 
-.sm-col-header,
-.sm-space.sm-col-header {
+/* tira o espaço extra que “empurra” linhas/colunas do header */
+.sm-col-header {
     margin-bottom: 0;
 }
-
-.sm-row-header,
-.sm-space.sm-row-header {
+.sm-row-header {
     margin-right: 0;
 }
-
 .sm-empty-cell {
-    margin: 4px 0 0 4px;
+    margin: var(--seat-gap) 0 0 var(--seat-gap);
 }
 
-/* -----------------------------------------------------------
-   6. ASSENTOS E ESTADOS
------------------------------------------------------------ */
-
+/* =========================================================
+    3. SEATS (base + variantes) 
+======================================================= */
 .sm-seat {
-    background-color: darkgreen; /* cor pode mudar por seção  */
+    background: var(--c-seat);
     color: #fff;
-    border-radius: 7px 7px 0 0;
-    font-size: 9px;
-    font-weight: bold;
+    border-radius: var(--seat-radius);
+    font-size: var(--f-seat);
+    font-weight: 700;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -136,59 +143,61 @@
     padding-bottom: 2px;
 }
 
-.sm-seat-id {
-    line-height: 11px;
-}
-
 .sm-seat-extra {
-    font-size: 7px;
+    font-size: var(--f-seat-extra);
     pointer-events: none;
 }
 
-.sm-seat-icon {
-    width: 14px;
-    height: 14px;
+/*  — Icon shared — */
+.sm-seat-icon,
+.sm-legend-seat-icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
     margin-top: 2px;
     pointer-events: none;
     fill: #ffffff;
 }
 
+/*  — Wheelchair / Obese override — */
 .sm-wheelchair {
-    border-radius: 4px;
-    width: 33px;
-    height: 36px;
+    width: var(--seat-wheel-w);
+    height: var(--seat-wheel-h);
     margin: 0;
+    border-radius: 4px;
 }
-
 .sm-obese {
-    width: 29px;
-    height: 32px;
-    margin: 2px;
+    width: var(--seat-obese-w);
+    height: var(--seat-obese-h);
+    margin: var(--seat-obese-gap);
 }
 
-/* .sm-companion {
+/* Companion não altera tamanho – pode ser só uma mod        */
+.sm-companion {
+    /* vazio por enquanto */
+}
 
-} */
-
+/* =========================================================
+    4. STATES (interação)
+======================================================= */
 .sm-fixed-selected {
     cursor: not-allowed !important;
     pointer-events: none !important;
 }
 
-/* Assento permanentemente fora de uso                       */
-.sm-disable {
-    opacity: 0.8;
-    background-color: gray !important;
+.sm-disable,        /* assento fora de uso permanente */
+.sm-disable-click-seat {
+    opacity: 0.3 !important;
+    background: var(--c-seat-disabled) !important;
+    transform: scale(0.9) !important;
     cursor: not-allowed !important;
+    pointer-events: none !important;
 }
 
-/* Assento já escolhido pelo usuário                         */
 .sm-selected {
     opacity: 0.5 !important;
     transform: scale(0.9);
 }
 
-/* Assentos clicáveis — interação/hover                      */
 .sm-click-seat {
     cursor: pointer;
     transition: transform 0.2s;
@@ -196,85 +205,66 @@
 .sm-click-seat:hover {
     transform: scale(1.4);
     z-index: 1;
-    outline: #fff solid 2px;
+    outline: var(--c-seat-hover-outline) solid 2px;
 }
 
-/* Assentos visíveis mas não interativos                     */
-.sm-disable-click-seat {
-    opacity: 0.3 !important;
-    background-color: gray !important;
-    transform: scale(0.9) !important;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* -----------------------------------------------------------
-   7. LEGENDA
------------------------------------------------------------ */
-
+/* =========================================================
+    5. LEGEND
+======================================================= */
 .sm-legend {
     display: inline-block;
     margin-top: 1rem;
     padding: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--c-border);
 }
-
 .sm-legend-item {
     display: flex;
     align-items: center;
-    margin: 0px;
+    margin: 0;
 }
-
 .sm-legend-color {
-    width: 25px;
-    height: 28px;
-    border-radius: 7px 7px 0 0;
-    margin: 4px;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    border-radius: var(--seat-radius);
+    margin: var(--seat-gap);
+    background: var(--c-seat);
 }
-
 .sm-legend-text {
     margin-left: 5px;
-    font-weight: bold;
+    font-weight: 700;
 }
-
 .sm-legend-seat {
-    width: 25px;
-    height: 28px;
-    border: 1px solid #7c7c7c;
-    border-radius: 7px 7px 0 0;
+    width: var(--seat-w);
+    height: var(--seat-h);
+    border: 1px solid var(--c-legend-border);
+    border-radius: var(--seat-radius);
     padding-bottom: 2px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
     background: #fff;
-    margin: 4px;
+    margin: var(--seat-gap);
+    color: var(--c-legend-txt);
 }
-
 .sm-legend-wheelchair {
-    border-radius: 4px;
-    width: 33px;
-    height: 36px;
+    width: var(--seat-wheel-w);
+    height: var(--seat-wheel-h);
     margin: 0;
+    border-radius: 4px;
 }
-
 .sm-legend-obese {
-    width: 29px;
-    height: 32px;
-    margin: 2px;
+    width: var(--seat-obese-w);
+    height: var(--seat-obese-h);
+    margin: var(--seat-obese-gap);
 }
 
 .sm-legend-seat span {
     font-size: 8px;
     line-height: 12px;
     font-weight: 700;
-    color: #7c7c7c;
+    color: var(--c-legend-txt);
 }
-
 .sm-legend-seat-icon {
-    width: 14px;
-    height: 14px;
-    margin-top: 2px;
-    pointer-events: none;
-    fill: #7c7c7c;
+    fill: var(--c-legend-txt);
 }

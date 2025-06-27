@@ -724,6 +724,11 @@ export class SeatMap {
     updateOptions(newOptions) {
         // Atualiza as opções mesclando as atuais com as novas
         this.options = { ...this.options, ...newOptions };
+        // Reinicializa variáveis
+        this.selectedSeats = new Set();
+        this.sectionCounts = [];
+        this.activeSection = this.options.exclusiveSection;
+        this.allSeats = [];
         // Remove eventos e conteúdo atual
         this.destroy();
         // Re-inicializa o plugin para renderizar com as novas opções
