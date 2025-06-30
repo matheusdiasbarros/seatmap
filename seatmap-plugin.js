@@ -70,6 +70,7 @@ export class SeatMap {
             maxSeatsPerSection: {}, // Limite de assentos por seção
             exclusiveSection: null, // Seção exclusiva para seleção
             showLegends: false, // Exibe legenda
+            showLegendsSections: true, // Exibe legenda das seções
             legendTarget: null, // Elemento alvo para a legenda
             // Eventos
             onSelect: null, // Callback quando assento é selecionado
@@ -445,10 +446,19 @@ export class SeatMap {
 
         const legendContainer = $('<div class="sm-legend"></div>');
 
-        /* ---------- Seções coloridas normais ---------- */
-        this.options.sections.forEach((section) => {
-            legendContainer.append(makeColorItem(section.color, section.label));
-        });
+        if (this.options.showLegendsSections) {
+            /* ---------- Assento comum ---------- */
+            if (this.allSeats.some((s) => s.section === "default")) {
+                legendContainer.append(makeColorItem("darkgreen", "Comum"));
+            }
+
+            /* ---------- Seções coloridas normais ---------- */
+            this.options.sections.forEach((section) => {
+                legendContainer.append(
+                    makeColorItem(section.color, section.label)
+                );
+            });
+        }
 
         /* ---------- Categorias especiais ---------- */
         if (this.options.wheelchairSeats?.length) {
@@ -492,11 +502,6 @@ export class SeatMap {
                     "Acomp. cadeirante"
                 )
             );
-        }
-
-        /* ---------- Assento comum ---------- */
-        if (this.allSeats.some((s) => s.section === "default")) {
-            legendContainer.append(makeColorItem("darkgreen", "Comum"));
         }
 
         /* ---------- Insere no alvo ---------- */

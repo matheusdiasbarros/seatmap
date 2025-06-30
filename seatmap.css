@@ -212,10 +212,11 @@
     5. LEGEND
 ======================================================= */
 .sm-legend {
-    display: inline-block;
     margin-top: 1rem;
     padding: 5px;
     border: 1px solid var(--c-border);
+    border-radius: 10px;
+    padding: 20px;
 }
 .sm-legend-item {
     display: flex;
